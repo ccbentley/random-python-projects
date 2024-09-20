@@ -122,11 +122,11 @@ while playing:
 
     if won:
         print("You Beat The Dealer!")
-        money -= bet_money
+        money += bet_money * 2
         print("Money:", money)
     else:
         print("You Lost!")
-        money -= 0
+        money -= bet_money
         print("Money:", money)
     
     print("------------------------------------")
