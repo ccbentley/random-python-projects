@@ -48,6 +48,7 @@ playing: bool = True
 money: int = 500
 
 while playing:
+    print("------------------------------------")
     print("Current Balance:", money)
     bet_money: int = -1
     while bet_money > money or bet_money < 0:
@@ -68,36 +69,67 @@ while playing:
             total_player_cards = calc_total_cards(player_cards)
             print("Your Cards:", display_player_cards)
             if total_player_cards == 21:
-                print("You Win!")
+                stand = True
             elif total_player_cards > 21:
-                print("Over 21!")
                 stand = True
             elif len(player_cards) > 5:
-                print("You Win!")
                 stand = True
         elif choice == "S" or choice == "s":
             stand = True
     print("------------------------------------")
+
     deal_cards(dealer_cards, 3, display_dealer_cards)
+
     total_player_cards = calc_total_cards(player_cards)
     total_dealer_cards: int = calc_total_cards(dealer_cards)
+
     if total_dealer_cards < 19:
         add_card(dealer_cards, display_dealer_cards)
+    
+    total_dealer_cards = calc_total_cards(dealer_cards)
+
+    for card in player_cards:
+        if card == 1:
+            valid: bool = False
+            while not valid:
+                ace_choice: str = str(input("What would you like your ace to be worth (A: 1) (B: 11): "))
+                if ace_choice == "A" or ace_choice == "a":
+                    valid = True
+                elif ace_choice == "B" or ace_choice == "b":
+                    valid = True
+                    total_player_cards += 10
+
+    for card in dealer_cards:
+        if card == 1:
+            if total_dealer_cards + 10 <= 21:
+                total_dealer_cards += 10
+            else:
+                pass
+
+    won: bool = False
+
+    print("------------------------------------")
+    print("Your Cards:", display_player_cards, total_player_cards)
+    print("Dealer Cards:", display_dealer_cards, total_dealer_cards)
+    print("------------------------------------")
+
     if total_player_cards <= 21 and total_player_cards > total_dealer_cards:
+        won = True
+    elif total_dealer_cards <= 21:
+        won = False
+    else:
+        won = True
+
+    if won:
         print("You Beat The Dealer!")
         money -= bet_money
         print("Money:", money)
-    elif total_dealer_cards <= 21:
+    else:
         print("You Lost!")
         money -= 0
         print("Money:", money)
-    else:
-        print("You Beat The Dealer!")
-        money += bet_money * 2
-        print("Money:", money)
+    
     print("------------------------------------")
-    print("Your Cards:", display_player_cards, total_player_cards)
-    print("Dealer Cards", display_dealer_cards, total_dealer_cards)
     play_again_choice: str = input("Would you like to play again? (Y/N): ")
     if play_again_choice == "Y" or play_again_choice == "y":
         playing = True
