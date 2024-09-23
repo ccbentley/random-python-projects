@@ -50,9 +50,18 @@ money: int = 500
 while playing:
     print("------------------------------------")
     print("Current Balance:", money)
+    life_choice: bool = False
     bet_money: int = -1
-    while bet_money > money or bet_money < 0:
-        bet_money: int = int(input("How Much Money Would You Like To Bet?: "))
+    if money <= 0:
+        choice: str = str(input("Would you like to bet your life: Win = $1000, Lose = Die (Y/N): "))
+        if choice == "Y" or "y":
+            life_choice = True
+    else:
+        while bet_money > money or bet_money < 0 or bet_money == 0:
+            try:
+                bet_money = int(input("How Much Money Would You Like To Bet?: "))
+            except ValueError:
+                bet_money = -1
     player_cards = []
     dealer_cards = []
     display_player_cards = []
@@ -83,7 +92,7 @@ while playing:
     total_player_cards = calc_total_cards(player_cards)
     total_dealer_cards: int = calc_total_cards(dealer_cards)
 
-    if total_dealer_cards < 19:
+    if total_dealer_cards < 15:
         add_card(dealer_cards, display_dealer_cards)
     
     total_dealer_cards = calc_total_cards(dealer_cards)
@@ -107,27 +116,44 @@ while playing:
                 pass
 
     won: bool = False
-
+    draw: bool = False
+    
     print("------------------------------------")
     print("Your Cards:", display_player_cards, total_player_cards)
     print("Dealer Cards:", display_dealer_cards, total_dealer_cards)
     print("------------------------------------")
-
-    if total_player_cards <= 21 and total_player_cards > total_dealer_cards:
+    if total_player_cards == total_dealer_cards:
+        draw = True
+    elif total_player_cards > 21 and total_dealer_cards > 21:
+        draw = True
+    elif total_player_cards <= 21 and total_player_cards > total_dealer_cards:
         won = True
     elif total_dealer_cards <= 21:
         won = False
     else:
         won = True
-
-    if won:
-        print("You Beat The Dealer!")
-        money += bet_money * 2
+    
+    if draw:
+        print("Draw!")
         print("Money:", money)
     else:
-        print("You Lost!")
-        money -= bet_money
-        print("Money:", money)
+        if not life_choice:
+            if won:
+                print("You Beat The Dealer!")
+                money += bet_money * 2
+                print("Money:", money)
+            else:
+                print("You Lost!")
+                money -= bet_money
+                print("Money:", money)
+        else:
+            if won:
+                print("You Beat The Dealer!")
+                money += 1000
+                print("Money:", money)
+            else:
+                print("You Lost!, The Dealer Shoots You!")
+                break
     
     print("------------------------------------")
     play_again_choice: str = input("Would you like to play again? (Y/N): ")
