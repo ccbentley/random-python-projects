@@ -18,25 +18,6 @@ def deal_cards(cards_arr, amount: int, display_cards_arr) -> None:
         else:
             display_cards_arr.append("[" + str(random_card_value) + "]")
             cards_arr.append(random_card_value)
-
-
-def add_card(cards_arr, display_cards_arr) -> None:
-    random_card_value: int = random.randrange(1, 13)
-    if random_card_value == 1:
-        display_cards_arr.append("[A]")
-        cards_arr.append(1)
-    elif random_card_value == 11:
-        display_cards_arr.append("[J]")
-        cards_arr.append(10)
-    elif random_card_value == 12:
-        display_cards_arr.append("[Q]")
-        cards_arr.append(10)
-    elif random_card_value == 13:
-        display_cards_arr.append("[K]")
-        cards_arr.append(10)
-    else:
-        display_cards_arr.append("[" + str(random_card_value) + "]")
-        cards_arr.append(random_card_value)
     
 def calc_total_cards(cards_arr) -> int:
     total_cards: int = 0
@@ -54,7 +35,7 @@ while playing:
     bet_money: int = -1
     if money <= 0:
         choice: str = str(input("Would you like to bet your life: Win = $1000, Lose = Die (Y/N): "))
-        if choice == "Y" or "y":
+        if choice == "Y" or choice == "y":
             life_choice = True
     else:
         while bet_money > money or bet_money < 0 or bet_money == 0:
@@ -74,7 +55,7 @@ while playing:
         print("------------------------------------")
         choice = str(input("Would you like to hit or stand? (H/S): "))
         if choice == "H" or choice == "h":
-            add_card(player_cards, display_player_cards)
+            deal_cards(player_cards, 1, display_player_cards)
             total_player_cards = calc_total_cards(player_cards)
             print("Your Cards:", display_player_cards)
             if total_player_cards == 21:
@@ -93,7 +74,7 @@ while playing:
     total_dealer_cards: int = calc_total_cards(dealer_cards)
 
     if total_dealer_cards < 15:
-        add_card(dealer_cards, display_dealer_cards)
+        deal_cards(dealer_cards, 1, display_dealer_cards)
     
     total_dealer_cards = calc_total_cards(dealer_cards)
 
