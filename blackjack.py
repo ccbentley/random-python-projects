@@ -1,5 +1,7 @@
 import random
 
+playing: bool = True
+
 def deal_cards(cards_arr, amount: int, display_cards_arr) -> None:
     for card in range(amount):
         random_card_value: int = random.randrange(1,13)
@@ -25,8 +27,24 @@ def calc_total_cards(cards_arr) -> int:
         total_cards += card
     return total_cards
 
-playing: bool = True
-money: int = 500
+def save_money(money) -> None:
+    file = open("SavedBank.dat","w")
+    file.write(str(money))
+
+def set_money() -> int:
+    try:
+        file = open("SavedBank.dat", "r")
+        _money = file.readline()
+        money = int(_money)
+        return money
+    except:
+        return False
+    
+money: int = 0
+try:
+    money: int = set_money()
+except:
+    pass
 
 while playing:
     print("------------------------------------")
@@ -143,3 +161,4 @@ while playing:
     elif play_again_choice == "N" or play_again_choice == "n":
         playing = False
     print("------------------------------------\n")
+    save_money(money)
