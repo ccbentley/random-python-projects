@@ -153,7 +153,7 @@ while playing:
             else:
                 print("You Lost!, The Dealer Shoots You!")
                 break
-    
+    save_money(money)
     print("------------------------------------")
     play_again_choice: str = input("Would you like to play again? (Y/N): ")
     if play_again_choice == "Y" or play_again_choice == "y":
@@ -161,4 +161,3 @@ while playing:
     elif play_again_choice == "N" or play_again_choice == "n":
         playing = False
     print("------------------------------------\n")
-    save_money(money)
