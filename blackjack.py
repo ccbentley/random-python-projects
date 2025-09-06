@@ -26,35 +26,16 @@ def calc_total_cards(cards_arr) -> int:
     for card in cards_arr:
         total_cards += card
     return total_cards
-
-def save_money(money) -> None:
-    file = open("SavedBank.dat","w")
-    file.write(str(money))
-
-def set_money() -> int:
-    try:
-        file = open("SavedBank.dat", "r")
-        _money = file.readline()
-        money = int(_money)
-        return money
-    except:
-        return False
     
-money: int = 0
-try:
-    money: int = set_money()
-except:
-    pass
+money: int = 500
 
 while playing:
     print("------------------------------------")
     print("Current Balance:", money)
-    life_choice: bool = False
     bet_money: int = -1
     if money <= 0:
-        choice: str = str(input("Would you like to bet your life: Win = $1000, Lose = Die (Y/N): "))
-        if choice == "Y" or choice == "y":
-            life_choice = True
+        print("You ran out of money :(")
+        break
     else:
         while bet_money > money or bet_money < 0 or bet_money == 0:
             try:
@@ -136,28 +117,20 @@ while playing:
         print("Draw!")
         print("Money:", money)
     else:
-        if not life_choice:
-            if won:
-                print("You Beat The Dealer!")
-                money += bet_money * 2
-                print("Money:", money)
-            else:
-                print("You Lost!")
-                money -= bet_money
-                print("Money:", money)
+        if won:
+            print("You Beat The Dealer!")
+            money += bet_money
+            print("Money:", money)
         else:
-            if won:
-                print("You Beat The Dealer!")
-                money += 1000
-                print("Money:", money)
-            else:
-                print("You Lost!, The Dealer Shoots You!")
-                break
-    save_money(money)
+            print("You Lost!")
+            money -= bet_money
+            print("Money:", money)
     print("------------------------------------")
     play_again_choice: str = input("Would you like to play again? (Y/N): ")
-    if play_again_choice == "Y" or play_again_choice == "y":
-        playing = True
-    elif play_again_choice == "N" or play_again_choice == "n":
-        playing = False
+    while play_again_choice != "Y" and play_again_choice != "y" and play_again_choice != "N" and play_again_choice != "n":
+        play_again_choice = input("Invalid choice. Please enter Y or N: ")
+        if play_again_choice == "Y" or play_again_choice == "y":
+            playing = True
+        elif play_again_choice == "N" or play_again_choice == "n":
+            playing = False
     print("------------------------------------\n")
