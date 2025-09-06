@@ -35,6 +35,7 @@ while playing:
     bet_money: int = -1
     if money <= 0:
         print("You ran out of money :(")
+        playing = False
         break
     else:
         while bet_money > money or bet_money < 0 or bet_money == 0:
@@ -129,8 +130,9 @@ while playing:
     play_again_choice: str = input("Would you like to play again? (Y/N): ")
     while play_again_choice != "Y" and play_again_choice != "y" and play_again_choice != "N" and play_again_choice != "n":
         play_again_choice = input("Invalid choice. Please enter Y or N: ")
-        if play_again_choice == "Y" or play_again_choice == "y":
-            playing = True
-        elif play_again_choice == "N" or play_again_choice == "n":
-            playing = False
+    
+    if play_again_choice == "Y" or play_again_choice == "y":
+        playing = True
+    elif play_again_choice == "N" or play_again_choice == "n":
+        playing = False
     print("------------------------------------\n")
