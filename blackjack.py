@@ -1,138 +1,136 @@
 import random
 
-playing: bool = True
+suits = ["S", "H", "D", "C"]
+ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+values = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,
+          "8": 8, "9": 9, "10": 10, "J": 10, "Q": 10, "K": 10}
 
-def deal_cards(cards_arr, amount: int, display_cards_arr) -> None:
-    for card in range(amount):
-        random_card_value: int = random.randrange(1,13)
-        if random_card_value == 1:
-            display_cards_arr.append("[A]")
-            cards_arr.append(1)
-        elif random_card_value == 11:
-            display_cards_arr.append("[J]")
-            cards_arr.append(10)
-        elif random_card_value == 12:
-            display_cards_arr.append("[Q]")
-            cards_arr.append(10)
-        elif random_card_value == 13:
-            display_cards_arr.append("[K]")
-            cards_arr.append(10)
+def make_deck():
+    deck = []
+    for suit in suits:
+        for rank in ranks:
+            deck.append(rank + suit)
+    random.shuffle(deck)
+    return deck
+
+def card_value(card):
+    return values[card[:-1]]
+
+def hand_total(cards):
+    total = 0
+    for card in cards:
+        total += card_value(card)
+    for card in cards:
+        if card[:-1] == "A" and total + 10 <= 21:
+            total += 10
+    return total
+
+def show_hand(name, cards, hide_first=False):
+    display = []
+    for i, card in enumerate(cards):
+        if i == 0 and hide_first:
+            display.append("[??]")
         else:
-            display_cards_arr.append("[" + str(random_card_value) + "]")
-            cards_arr.append(random_card_value)
-    
-def calc_total_cards(cards_arr) -> int:
-    total_cards: int = 0
-    for card in cards_arr:
-        total_cards += card
-    return total_cards
-    
-money: int = 500
+            display.append("[" + card + "]")
+    print(name + ":", " ".join(display))
 
-while playing:
-    print("------------------------------------")
-    print("Current Balance:", money)
-    bet_money: int = -1
-    if money <= 0:
-        print("You ran out of money :(")
-        playing = False
-        break
-    else:
-        while bet_money > money or bet_money < 0 or bet_money == 0:
-            try:
-                bet_money = int(input("How Much Money Would You Like To Bet?: "))
-            except ValueError:
-                bet_money = -1
-    player_cards = []
-    dealer_cards = []
-    display_player_cards = []
-    display_dealer_cards = []
-    deal_cards(player_cards, 1, display_player_cards)
-    total_player_cards: int = calc_total_cards(player_cards)
-    print("Your Cards:", display_player_cards)
-    stand: bool = False
-    while not stand:
-        print("------------------------------------")
-        choice = str(input("Would you like to hit or stand? (H/S): "))
-        if choice == "H" or choice == "h":
-            deal_cards(player_cards, 1, display_player_cards)
-            total_player_cards = calc_total_cards(player_cards)
-            print("Your Cards:", display_player_cards)
-            if total_player_cards == 21:
-                stand = True
-            elif total_player_cards > 21:
-                stand = True
-            elif len(player_cards) > 5:
-                stand = True
-        elif choice == "S" or choice == "s":
-            stand = True
-    print("------------------------------------")
+def player_turn(deck, hand):
+    while True:
+        total = hand_total(hand)
+        show_hand("Your hand", hand)
+        print("  Total:", total)
 
-    deal_cards(dealer_cards, 3, display_dealer_cards)
+        if total > 21:
+            print("  Bust!")
+            return total
 
-    total_player_cards = calc_total_cards(player_cards)
-    total_dealer_cards: int = calc_total_cards(dealer_cards)
-
-    if total_dealer_cards < 15:
-        deal_cards(dealer_cards, 1, display_dealer_cards)
-    
-    total_dealer_cards = calc_total_cards(dealer_cards)
-
-    for card in player_cards:
-        if card == 1:
-            valid: bool = False
-            while not valid:
-                ace_choice: str = str(input("What would you like your ace to be worth (A: 1) (B: 11): "))
-                if ace_choice == "A" or ace_choice == "a":
-                    valid = True
-                elif ace_choice == "B" or ace_choice == "b":
-                    valid = True
-                    total_player_cards += 10
-
-    for card in dealer_cards:
-        if card == 1:
-            if total_dealer_cards + 10 <= 21:
-                total_dealer_cards += 10
-            else:
-                pass
-
-    won: bool = False
-    draw: bool = False
-    
-    print("------------------------------------")
-    print("Your Cards:", display_player_cards, total_player_cards)
-    print("Dealer Cards:", display_dealer_cards, total_dealer_cards)
-    print("------------------------------------")
-    if total_player_cards == total_dealer_cards:
-        draw = True
-    elif total_player_cards > 21 and total_dealer_cards > 21:
-        draw = True
-    elif total_player_cards <= 21 and total_player_cards > total_dealer_cards:
-        won = True
-    elif total_dealer_cards <= 21:
-        won = False
-    else:
-        won = True
-    
-    if draw:
-        print("Draw!")
-        print("Money:", money)
-    else:
-        if won:
-            print("You Beat The Dealer!")
-            money += bet_money
-            print("Money:", money)
+        choice = input("Hit or stand? (H/S): ").strip().lower()
+        if choice == "h" or choice == "hit":
+            hand.append(deck.pop())
+        elif choice == "s" or choice == "stand":
+            return total
         else:
-            print("You Lost!")
-            money -= bet_money
-            print("Money:", money)
-    print("------------------------------------")
-    play_again_choice: str = input("Would you like to play again? (Y/N): ")
-    while play_again_choice != "Y" and play_again_choice != "y" and play_again_choice != "N" and play_again_choice != "n":
-        play_again_choice = input("Invalid choice. Please enter Y or N: ")
-    
-    if play_again_choice == "Y" or play_again_choice == "y":
-        playing = True
-    elif play_again_choice == "N" or play_again_choice == "n":
-        playing = False
-    print("------------------------------------\n")
+            print("  Enter H or S.")
+
+def dealer_turn(deck, hand):
+    show_hand("Dealer hand", hand)
+    while True:
+        total = hand_total(hand)
+        if total > 21:
+            print("  Dealer busts!")
+            return total
+        if total >= 17:
+            print("  Dealer stands at", total)
+            return total
+        hand.append(deck.pop())
+        show_hand("Dealer hand", hand)
+
+def get_bet(money):
+    while True:
+        try:
+            bet = int(input("How much would you like to bet? "))
+            if bet > 0 and bet <= money:
+                return bet
+            print("  Bet must be between 1 and " + str(money) + ".")
+        except ValueError:
+            print("  Enter a number.")
+
+def main():
+    print("Welcome to Blackjack!")
+    money = 500
+
+    while True:
+        if money <= 0:
+            print("\nYou ran out of money!")
+            break
+
+        print("\nBalance: $" + str(money))
+        print("=" * 40)
+
+        bet = get_bet(money)
+
+        deck = make_deck()
+        player = [deck.pop(), deck.pop()]
+        dealer = [deck.pop(), deck.pop()]
+
+        show_hand("Dealer showing", dealer, hide_first=True)
+        print()
+
+        p_total = player_turn(deck, player)
+        if p_total > 21:
+            money -= bet
+            print("\nYou lost $" + str(bet) + "!")
+            continue
+
+        print()
+        d_total = dealer_turn(deck, dealer)
+
+        print("\n" + "-" * 40)
+        show_hand("Your hand", player)
+        print("  Total:", p_total)
+        show_hand("Dealer hand", dealer)
+        print("  Total:", d_total)
+
+        if d_total > 21 or p_total > d_total:
+            money += bet
+            print("\nYou won $" + str(bet) + "!")
+        elif p_total == d_total:
+            print("\nPush! Your bet is returned.")
+        else:
+            money -= bet
+            print("\nYou lost $" + str(bet) + "!")
+
+        while True:
+            again = input("Play again? (Y/N): ").strip().lower()
+            if again == "y" or again == "yes":
+                break
+            elif again == "n" or again == "no":
+                print("\nFinal balance: $" + str(money))
+                print("Thanks for playing!")
+                return
+
+    print("\nFinal balance: $0")
+    print("Thanks for playing!")
+
+if __name__ == "__main__":
+    main()
